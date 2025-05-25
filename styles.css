@@ -41,11 +41,15 @@ body {
 }
 
 .bulb {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 10px currentColor;
-  animation: glow 1.5s infinite alternate;
+  position: absolute;
+  /* box-shadow: 0 0 10px currentColor; */
+  /* animation: glow 1.5s infinite alternate; */
+  animation: twinkle 2s ease-in-out infinite;
+  box-shadow: 0 0 6px 2px rgba(255, 255, 0, 0.3),
+    0 0 12px 4px rgba(255, 255, 0, 0.2), 0 0 24px 8px rgba(255, 255, 0, 0.1);
 }
 
 .red {
@@ -82,5 +86,20 @@ body {
   100% {
     opacity: 1;
     box-shadow: 0 0 30px currentColor;
+  }
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.6;
+    box-shadow: 0 0 4px 1px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 12px 6px currentColor;
+  }
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 4px 1px currentColor;
   }
 }
