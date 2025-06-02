@@ -108,6 +108,10 @@ async function fetchTracks(artistId, token) {
 
 async function cycleTracks(tracks) {
   const playableTracks = tracks.filter((track) => track.preview_url);
+  if (playableTracks.length === 0) {
+    console.warn("No playable tracks found!");
+    return;
+  }
   playNextTrack(playableTracks);
 }
 
