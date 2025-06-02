@@ -119,13 +119,19 @@ let audio;
 let trackIndex = 0;
 
 function playNextTrack(tracks) {
-  if (audio) audio.pause();
+  if (audio) {
+    audio.pause();
+    audio.removeEventListener("ended", onTrackEnd); // clean up
+  }
+
   const track = tracks[trackIndex];
   audio = new Audio(track.preview_url);
   audio.play();
 
-  trackIndex = (trackIndex + 1) % tracks.length;
+  function onTrackEnd() {
+    trackIndex = (trackIndex + 1) % tracks.length;
+    playNextTrack(tracks);
+  }
 
-  // Set up to play the next one after 30 seconds (or when the preview ends)
-  setTimeout(() => playNextTrack(tracks), 30000);
+  audio.addEventListener("ended", onTrackEnd);
 }
