@@ -41,8 +41,6 @@ async function fetchAlbums(artistName) {
   const tokenRes = await fetch("/api/token");
   const tokenData = await tokenRes.json();
   const { token } = tokenData;
-  console.log("Token response data:", tokenData);
-  console.log("Sending token to Spotify:", token);
 
   const searchRes = await fetch(
     `https://api.spotify.com/v1/search?q=${encodeURIComponent(
@@ -62,7 +60,7 @@ async function fetchAlbums(artistName) {
   }
 
   const albumsRes = await fetch(
-    `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&limit=10`,
+    `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&limit=20`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -70,38 +68,31 @@ async function fetchAlbums(artistName) {
     }
   );
   const albumsData = await albumsRes.json();
-  // Stop any existing album cover cycling
   clearInterval(cycleAlbumCovers);
-
   cycleAlbumCovers(albumsData.items);
-  // Uncomment the following lines if you want to set a static album cover as a placeholder
-  // const firstAlbumCover = albumsData.items[0]?.images[0]?.url;
-
-  // if (firstAlbumCover) {
-  //   document.getElementById(
-  //     "album-placeholder"
-  //   ).style.backgroundImage = `url(${firstAlbumCover})`;
-  //   document.getElementById("album-placeholder").style.backgroundSize = "cover";
-  //   document.getElementById("album-placeholder").style.backgroundPosition =
-  //     "center";
-  // } else {
-  //   console.warn("No album covers found");
-  // }
 }
 
 async function cycleAlbumCovers(albums) {
-  let currentIndex = 0;
+  let currentIndex = 1;
+
+  updateAlbumCover(albums[0]);
+
   setInterval(() => {
-    const albumCover = albums[currentIndex].images[0]?.url;
-    if (albumCover) {
-      document.getElementById(
-        "album-placeholder"
-      ).style.backgroundImage = `url(${albumCover})`;
-      document.getElementById("album-placeholder").style.backgroundSize =
-        "cover";
-      document.getElementById("album-placeholder").style.backgroundPosition =
-        "center";
-    }
+    updateAlbumCover(albums[currentIndex]);
     currentIndex = (currentIndex + 1) % albums.length;
   }, 5000);
+}
+
+function updateAlbumCover(album) {
+  const albumCover = album?.images[0]?.url;
+  if (albumCover) {
+    document.getElementById(
+      "album-placeholder"
+    ).style.backgroundImage = `url(${albumCover})`;
+    // document.getElementById("album-placeholder").style.backgroundSize = "cover";
+    // document.getElementById("album-placeholder").style.backgroundPosition =
+    //   "center";
+  } else {
+    console.warn("No album covers found");
+  }
 }
