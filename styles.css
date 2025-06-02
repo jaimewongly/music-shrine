@@ -4,7 +4,7 @@ body {
   background-position: center;
   background-size: contain;
   background-attachment: fixed;
-  background-color: #222;
+  background: radial-gradient(circle at center, #222 0%, #000 100%);
   margin: 0;
 }
 
