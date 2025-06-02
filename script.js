@@ -54,7 +54,8 @@ async function submitArtist() {
     return;
   }
   fetchAlbums(artistId, token);
-  fetchTracks(artistId, token);
+  //fetchTracks(artistId, token);
+  fetchDeezerTracks(artistName);
 }
 
 async function fetchAlbums(artistId, token) {
@@ -98,27 +99,41 @@ function updateAlbumCover(album) {
   }
 }
 
-async function fetchTracks(artistId, token) {
+async function fetchDeezerTracks(artistName) {
   const response = await fetch(
-    `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=US`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    `/api/deezer?query=${encodeURIComponent(artistName)}`
   );
   const data = await response.json();
-  console.log("Tracks received:", data.tracks); // 👀
-  if (data.tracks) {
-    cycleTracks(data.tracks);
+  console.log("Tracks received:", data.data);
+
+  if (data.data && data.data.length > 0) {
+    cycleTracks(data.data);
   } else {
-    console.warn("No tracks property in data:", data);
+    console.warn("No tracks found!");
   }
 }
 
+// async function fetchTracks(artistId, token) {
+//   const response = await fetch(
+//     `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=US`,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     }
+//   );
+//   const data = await response.json();
+//   console.log("Tracks received:", data.tracks); // 👀
+//   if (data.tracks) {
+//     cycleTracks(data.tracks);
+//   } else {
+//     console.warn("No tracks property in data:", data);
+//   }
+// }
+
 async function cycleTracks(tracks) {
-  const playableTracks = tracks.filter((track) => track.preview_url);
-  console.log("Playable tracks:", playableTracks); // 👀
+  const playableTracks = tracks.filter((track) => track.preview);
+  console.log("Playable tracks:", playableTracks);
   if (playableTracks.length === 0) {
     console.warn("No playable tracks found!");
     return;
@@ -132,11 +147,11 @@ let trackIndex = 0;
 function playNextTrack(tracks) {
   if (audio) {
     audio.pause();
-    audio.removeEventListener("ended", onTrackEnd); // clean up
+    audio.removeEventListener("ended", onTrackEnd);
   }
 
   const track = tracks[trackIndex];
-  audio = new Audio(track.preview_url);
+  audio = new Audio(track.preview);
   audio.play();
 
   function onTrackEnd() {
