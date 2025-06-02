@@ -103,11 +103,17 @@ async function fetchTracks(artistId, token) {
     }
   );
   const data = await response.json();
-  cycleTracks(data.tracks);
+  console.log("Tracks received:", data.tracks); // 👀
+  if (data.tracks) {
+    cycleTracks(data.tracks);
+  } else {
+    console.warn("No tracks property in data:", data);
+  }
 }
 
 async function cycleTracks(tracks) {
   const playableTracks = tracks.filter((track) => track.preview_url);
+  console.log("Playable tracks:", playableTracks); // 👀
   if (playableTracks.length === 0) {
     console.warn("No playable tracks found!");
     return;
