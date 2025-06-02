@@ -8,7 +8,17 @@ body {
   margin: 0;
 }
 
-.album-placeholder {
+/* #album-placeholder {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  background-color: #222;
+  background-size: cover;
+  background-position: center;
+  margin: auto;
+} */
+
+#album-placeholder {
   width: 350px;
   height: 350px;
   background-color: rgba(255, 255, 255, 0.1); /* semi-transparent white */
