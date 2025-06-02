@@ -54,10 +54,11 @@ async function submitArtist() {
     return;
   }
   fetchAlbums(artistId, token);
+  fetchTracks(artistId, token);
 }
 
 async function fetchAlbums(artistId, token) {
-  const albumsRes = await fetch(
+  const response = await fetch(
     `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&limit=20`,
     {
       headers: {
@@ -65,9 +66,9 @@ async function fetchAlbums(artistId, token) {
       },
     }
   );
-  const albumsData = await albumsRes.json();
+  const data = await response.json();
   clearInterval(cycleAlbumCovers);
-  cycleAlbumCovers(albumsData.items);
+  cycleAlbumCovers(data.items);
 }
 
 async function cycleAlbumCovers(albums) {
@@ -78,7 +79,7 @@ async function cycleAlbumCovers(albums) {
   setInterval(() => {
     updateAlbumCover(albums[currentIndex]);
     currentIndex = (currentIndex + 1) % albums.length;
-  }, 5000);
+  }, 3500);
 }
 
 function updateAlbumCover(album) {
@@ -90,4 +91,37 @@ function updateAlbumCover(album) {
   } else {
     console.warn("No album covers found");
   }
+}
+
+async function fetchTracks(artistId, token) {
+  const response = await fetch(
+    `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=US`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await response.json();
+  cycleTracks(data.tracks);
+}
+
+async function cycleTracks(tracks) {
+  const playableTracks = tracks.filter((track) => track.preview_url);
+  playNextTrack(playableTracks);
+}
+
+let audio;
+let trackIndex = 0;
+
+function playNextTrack(tracks) {
+  if (audio) audio.pause();
+  const track = tracks[trackIndex];
+  audio = new Audio(track.preview_url);
+  audio.play();
+
+  trackIndex = (trackIndex + 1) % tracks.length;
+
+  // Set up to play the next one after 30 seconds (or when the preview ends)
+  setTimeout(() => playNextTrack(tracks), 30000);
 }
