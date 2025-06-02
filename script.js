@@ -67,16 +67,21 @@ async function fetchAlbums(artistId, token) {
     }
   );
   const data = await response.json();
-  clearInterval(cycleAlbumCovers);
   cycleAlbumCovers(data.items);
 }
+
+let albumIntervalId = null;
 
 async function cycleAlbumCovers(albums) {
   let currentIndex = 1;
 
+  if (albumIntervalId) {
+    clearInterval(albumIntervalId);
+  }
+
   updateAlbumCover(albums[0]);
 
-  setInterval(() => {
+  albumIntervalId = setInterval(() => {
     updateAlbumCover(albums[currentIndex]);
     currentIndex = (currentIndex + 1) % albums.length;
   }, 3500);
