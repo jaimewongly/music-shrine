@@ -54,7 +54,6 @@ async function submitArtist() {
     return;
   }
   fetchAlbums(artistId, token);
-  //fetchTracks(artistId, token);
   fetchDeezerTracks(artistName);
 }
 

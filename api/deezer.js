@@ -1,10 +1,8 @@
 export default async function handler(req, res) {
   const { query } = req.query;
-
   if (!query) {
     return res.status(400).json({ error: "Missing 'query' parameter" });
   }
-
   try {
     const deezerRes = await fetch(
       `https://api.deezer.com/search?q=${encodeURIComponent(query)}`
