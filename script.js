@@ -70,16 +70,38 @@ async function fetchAlbums(artistName) {
     }
   );
   const albumsData = await albumsRes.json();
-  const firstAlbumCover = albumsData.items[0]?.images[0]?.url;
+  // Stop any existing album cover cycling
+  clearInterval(cycleAlbumCovers);
 
-  if (firstAlbumCover) {
-    document.getElementById(
-      "album-placeholder"
-    ).style.backgroundImage = `url(${firstAlbumCover})`;
-    document.getElementById("album-placeholder").style.backgroundSize = "cover";
-    document.getElementById("album-placeholder").style.backgroundPosition =
-      "center";
-  } else {
-    console.warn("No album covers found");
-  }
+  cycleAlbumCovers(albumsData.items);
+  // Uncomment the following lines if you want to set a static album cover as a placeholder
+  // const firstAlbumCover = albumsData.items[0]?.images[0]?.url;
+
+  // if (firstAlbumCover) {
+  //   document.getElementById(
+  //     "album-placeholder"
+  //   ).style.backgroundImage = `url(${firstAlbumCover})`;
+  //   document.getElementById("album-placeholder").style.backgroundSize = "cover";
+  //   document.getElementById("album-placeholder").style.backgroundPosition =
+  //     "center";
+  // } else {
+  //   console.warn("No album covers found");
+  // }
+}
+
+async function cycleAlbumCovers(albums) {
+  let currentIndex = 0;
+  setInterval(() => {
+    const albumCover = albums[currentIndex].images[0]?.url;
+    if (albumCover) {
+      document.getElementById(
+        "album-placeholder"
+      ).style.backgroundImage = `url(${albumCover})`;
+      document.getElementById("album-placeholder").style.backgroundSize =
+        "cover";
+      document.getElementById("album-placeholder").style.backgroundPosition =
+        "center";
+    }
+    currentIndex = (currentIndex + 1) % albums.length;
+  }, 5000);
 }
