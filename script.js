@@ -32,16 +32,11 @@ lightPositions.forEach(([top, left]) => {
   document.body.appendChild(bulb);
 });
 
-function submitArtist() {
-  const artist = document.getElementById("artist-input").value;
-  fetchAlbums(artist);
-}
-
-async function fetchAlbums(artistName) {
+async function submitArtist() {
+  const artistName = document.getElementById("artist-input").value;
   const tokenRes = await fetch("/api/token");
   const tokenData = await tokenRes.json();
   const { token } = tokenData;
-
   const searchRes = await fetch(
     `https://api.spotify.com/v1/search?q=${encodeURIComponent(
       artistName
@@ -58,7 +53,10 @@ async function fetchAlbums(artistName) {
     console.error("Artist not found");
     return;
   }
+  fetchAlbums(artistId, token);
+}
 
+async function fetchAlbums(artistId, token) {
   const albumsRes = await fetch(
     `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&limit=20`,
     {
@@ -89,9 +87,6 @@ function updateAlbumCover(album) {
     document.getElementById(
       "album-placeholder"
     ).style.backgroundImage = `url(${albumCover})`;
-    // document.getElementById("album-placeholder").style.backgroundSize = "cover";
-    // document.getElementById("album-placeholder").style.backgroundPosition =
-    //   "center";
   } else {
     console.warn("No album covers found");
   }
