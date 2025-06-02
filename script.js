@@ -113,24 +113,6 @@ async function fetchDeezerTracks(artistName) {
   }
 }
 
-// async function fetchTracks(artistId, token) {
-//   const response = await fetch(
-//     `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=US`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     }
-//   );
-//   const data = await response.json();
-//   console.log("Tracks received:", data.tracks); // 👀
-//   if (data.tracks) {
-//     cycleTracks(data.tracks);
-//   } else {
-//     console.warn("No tracks property in data:", data);
-//   }
-// }
-
 async function cycleTracks(tracks) {
   const playableTracks = tracks.filter((track) => track.preview);
   console.log("Playable tracks:", playableTracks);
